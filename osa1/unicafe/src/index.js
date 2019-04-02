@@ -4,8 +4,15 @@ import ReactDOM from 'react-dom'
 const Statistics = ({ good, neutral, bad }) => {
 
     const total = good + neutral + bad
-    const mean = (good-bad)/total
-    const positive = (good/total)*100
+
+    if (total === 0){
+        return (
+            <p>Ei yhtään palautetta annettu</p>
+        )
+    }
+
+    const mean = (good - bad) / total
+    const positive = (good / total) * 100
 
     return (
         <div>
@@ -28,7 +35,7 @@ const Button = ({ handleClick, text }) => (
 
 
 const App = () => {
-    // tallenna napit omaan tilaansa
+
     const [good, setGood] = useState(0)
     const [neutral, setNeutral] = useState(0)
     const [bad, setBad] = useState(0)
