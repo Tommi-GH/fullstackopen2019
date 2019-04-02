@@ -1,0 +1,17 @@
+note over selain:
+käyttäjä painaa "tallenna" nappia,
+jolloin POST-kutsun mukana lähtee
+syöttökentän sisältö
+end note
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+note over palvelin:
+tallentaa uuden muistiinpanon tietokantaan
+end note
+
+palvelin-->selain: 201 Created: {"message":"note created"}
+
+note over selain:
+selain suorittaa tapahtumankäsittelijän
+ja lista päivittyy
+end note
