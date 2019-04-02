@@ -12,18 +12,25 @@ const Statistics = ({ good, neutral, bad }) => {
     }
 
     const mean = (good - bad) / total
-    const positive = (good / total) * 100
+    const positive = ((good / total) * 100) + " %"
 
     return (
         <div>
             <h1>Statistiikka</h1>
-            <p>Hyvä {good}</p>
-            <p>Meh {neutral}</p>
-            <p>Huono {bad}</p>
-            <p>Yhteensä {total}</p>
-            <p>Keskiarvo {mean}</p>
-            <p>Positiivisia {positive}%</p>
+            <Statistic text="Hyvä" value={good}/>
+            <Statistic text="Meh" value={neutral}/>
+            <Statistic text="Huono" value={bad}/>
+            <Statistic text="Yhteensä" value={total}/>
+            <Statistic text="Keskiarvo" value={mean}/>
+            <Statistic text="Positiivisia" value={positive}/>
         </div>
+    )
+}
+
+const Statistic = ({text, value}) => {
+
+    return(
+        <p>{text}: {value}</p>
     )
 }
 
