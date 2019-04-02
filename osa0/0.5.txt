@@ -1,3 +1,7 @@
+note right of selain: 
+Muokattu oppimateriaalin esimerkki vastaamaan SPA-sovellusta.
+Toteutus URL-osoitteita lukuun ottamatta vastaava
+end note
 selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa
 palvelin-->selain: HTML-koodi
 selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
