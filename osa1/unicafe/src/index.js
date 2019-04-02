@@ -1,17 +1,21 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Statistics = ({ status }) => {
-    console.log(status)
+const Statistics = ({ good, neutral, bad }) => {
+
+    const total = good + neutral + bad
+    const mean = (good-bad)/total
+    const positive = (good/total)*100
+
     return (
         <div>
             <h1>Statistiikka</h1>
-            <p>Hyvä {status.good}</p>
-            <p>Meh {status.neutral}</p>
-            <p>Huono {status.bad}</p>
-            <p>Yhteensä {status.total}</p>
-            <p>Keskiarvo {status.mean}</p>
-            <p>Positiivisia {status.positive}%</p>
+            <p>Hyvä {good}</p>
+            <p>Meh {neutral}</p>
+            <p>Huono {bad}</p>
+            <p>Yhteensä {total}</p>
+            <p>Keskiarvo {mean}</p>
+            <p>Positiivisia {positive}%</p>
         </div>
     )
 }
@@ -28,11 +32,6 @@ const App = () => {
     const [good, setGood] = useState(0)
     const [neutral, setNeutral] = useState(0)
     const [bad, setBad] = useState(0)
-
-    let total = good + neutral + bad
-    let mean = (good-bad)/total
-    let positive = (good/total)*100
-    let status = {good, neutral, bad, total, mean, positive}
 
     const handleClickGood = () => {
         setGood(good + 1)
@@ -53,7 +52,7 @@ const App = () => {
             <Button handleClick={handleClickGood} text="Hyvä" />
             <Button handleClick={handleClickNeutral} text="Meh" />
             <Button handleClick={handleClickBad} text="Huono" />
-            <Statistics status={status} />
+            <Statistics good={good} neutral={neutral} bad={bad} />
         </div>
     )
 }
