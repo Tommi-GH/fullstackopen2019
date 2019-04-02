@@ -1,16 +1,20 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 
-const Display = ({ status }) => (
-
-    <div>
-        <h1>Statistiikka</h1>
-        <p>Good {status[0]}</p>
-        <p>Neutral {status[1]}</p>
-        <p>Bad {status[2]}</p>
-    </div>
-
-)
+const Statistics = ({ status }) => {
+    console.log(status)
+    return (
+        <div>
+            <h1>Statistiikka</h1>
+            <p>Hyvä {status.good}</p>
+            <p>Meh {status.neutral}</p>
+            <p>Huono {status.bad}</p>
+            <p>Yhteensä {status.total}</p>
+            <p>Keskiarvo {status.mean}</p>
+            <p>Positiivisia {status.positive}%</p>
+        </div>
+    )
+}
 
 const Button = ({ handleClick, text }) => (
     <button onClick={handleClick}>
@@ -24,31 +28,32 @@ const App = () => {
     const [good, setGood] = useState(0)
     const [neutral, setNeutral] = useState(0)
     const [bad, setBad] = useState(0)
-    const [status, setStatus] = useState([good, neutral, bad])
+
+    let total = good + neutral + bad
+    let mean = (good-bad)/total
+    let positive = (good/total)*100
+    let status = {good, neutral, bad, total, mean, positive}
 
     const handleClickGood = () => {
-        console.log(good)
         setGood(good + 1)
-        setStatus([good, neutral, bad])
-        console.log(good)
     }
 
     const handleClickNeutral = () => {
         setNeutral(neutral + 1)
-        setStatus([good, neutral, bad])
     }
 
     const handleClickBad = () => {
         setBad(bad + 1)
-        setStatus([good, neutral, bad])
     }
+
 
     return (
         <div>
-            <Display status={status} />
-            <Button handleClick={handleClickGood} text="Good" />
-            <Button handleClick={handleClickNeutral} text="Neutral" />
-            <Button handleClick={handleClickBad} text="Bad" />
+            <h1>Anna palautetta</h1>
+            <Button handleClick={handleClickGood} text="Hyvä" />
+            <Button handleClick={handleClickNeutral} text="Meh" />
+            <Button handleClick={handleClickBad} text="Huono" />
+            <Statistics status={status} />
         </div>
     )
 }
