@@ -1,22 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PersonList from './Personlist';
 import SearchElement from './SearchElement';
 import AddPerson from './AddPerson';
+import axios from 'axios'
 
 const App = () => {
     const [newName, setNewName] = useState('')
     const [newPhone, setNewPhone] = useState('')
-    const [persons, setPersons] = useState([
-        { id: 0, name: 'Arto Hellas', phone: '040-123456' },
-        { id: 1, name: 'Martti Tienari', phone: '040-123456' },
-        { id: 2, name: 'Arto Järvinen', phone: '040-123456' },
-        { id: 3, name: 'Lea Kutvonen', phone: '040-123456' }
-    ])
+    const [persons, setPersons] = useState([])
     const [searchTerm, setSearchTerm] = useState('')
-    
-    const searchList = (searchTerm.length>0) ? persons.filter(person => 
+    const searchList = (searchTerm.length > 0) ? persons.filter(person =>
         person.name.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())
-        ) : persons
+    ) : persons
+
+    useEffect(() => {
+        axios
+            .get('http://localhost:3001/persons')
+            .then(response =>
+                setPersons(response.data))
+    }, [])
 
     const saveForm = (event) => {
         event.preventDefault()
@@ -59,8 +61,8 @@ const App = () => {
             <h2>Puhelinluettelo</h2>
             <SearchElement searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
             <AddPerson saveForm={saveForm} newName={newName} handleNameChange={handleNameChange}
-                        newPhone={newPhone} handlePhoneChange={handlePhoneChange}/>
-            <PersonList persons={searchList}/>
+                newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
+            <PersonList persons={searchList} />
         </div>
     )
 
