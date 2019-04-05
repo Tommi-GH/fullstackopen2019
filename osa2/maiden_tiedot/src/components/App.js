@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 import Search from './Search'
 import Results from './Results'
+import connections from '../connections'
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -13,7 +14,7 @@ const App = () => {
 
   useEffect(() => {
     axios
-      .get('https://restcountries.eu/rest/v2/all')
+      .get(connections.countries.baseUrl)
       .then(response =>
         setCountries(response.data))
   }, [])
@@ -21,7 +22,7 @@ const App = () => {
   const getWeather = (capital) => {
     useEffect(() => {
       axios
-        .get('http://api.apixu.com/v1/current.json?key=b03480b8a3344bfa975203520190404&q=' + capital)
+        .get(connections.weather.baseUrl+'?key='+connections.weather.apiKey+'&q=' + capital)
         .then(result => {
           console.log(result.data)
           setWeather({
