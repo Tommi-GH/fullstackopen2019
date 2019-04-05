@@ -24,7 +24,6 @@ const App = () => {
       axios
         .get(connections.weather.baseUrl+'?key='+connections.weather.apiKey+'&q=' + capital)
         .then(result => {
-          console.log(result.data)
           setWeather({
             text: result.data.current.condition.text,
             icon: result.data.current.condition.icon,
@@ -45,7 +44,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Maiden tietojen hakupalvelu</h1>
+      <h1>Country info service</h1>
       <Search searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
       <Results countryList={filteredCountries} handleShowClick={handleShowClick} weather={weather} getWeather={getWeather}/>
     </div>
