@@ -2,11 +2,11 @@ import React from 'react'
 import PersonElement from './PersonElement'
 
 
-const PersonList = ({persons}) => {
+const PersonList = ({persons, removePerson}) => {
     
     const personElements = () => persons.map(person => {
         return (
-            <PersonElement key={person.id} person={person} />
+            <PersonElement key={person.id} person={person} removePerson={() => removePerson(person.id)} />
         )
     })
     

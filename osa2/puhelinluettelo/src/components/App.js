@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import PersonList from './Personlist';
 import SearchElement from './SearchElement';
 import AddPerson from './AddPerson';
-import axios from 'axios'
+import personsService from '../services/Persons'
 
 const App = () => {
     const [newName, setNewName] = useState('')
@@ -14,30 +14,39 @@ const App = () => {
     ) : persons
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response =>
-                setPersons(response.data))
-    }, [])
+        personsService.getAll().then(returnedPersons => 
+            setPersons(returnedPersons))
+        }, [])
 
     const saveForm = (event) => {
         event.preventDefault()
         if (newName.length === 0 || newPhone.length === 0) {
             alert("Täytä molemmat kentät")
             return
-        } else if (persons.find(person => person.name.localeCompare(newName) === 0)) {
-            alert(`${newName} on jo luettelossa`)
-            return
-        } else if (persons.find(person => person.phone.localeCompare(newPhone) === 0)) {
-            alert(`${newPhone} on jo luettelossa`)
+        }
+        
+        if (persons.find(person => person.phone.localeCompare(newPhone) === 0)) {
+            alert(`${newPhone} on jo käytössä`)
             return
         }
-        const person = {
-            id: persons.length + 1,
-            name: newName,
-            phone: newPhone
+
+        const foundPerson = persons.find(person => person.name.localeCompare(newName) === 0)
+
+        if (foundPerson) {
+            const confirm = window.confirm(`${newName} on jo luettelossa, korvataanko numero uudella?`)
+            if(!confirm){ return }
+            const updatePerson = { ...foundPerson, phone: newPhone }
+            
+            personsService.update(updatePerson).then(responsePerson =>
+                setPersons(persons.map(person => responsePerson.id !== person.id ? person : responsePerson))
+            )
+            
+        } else{    
+            personsService.create(newName, newPhone).then(responsePerson =>
+                setPersons(persons.concat(responsePerson))
+            )
         }
-        setPersons(persons.concat(person))
+
         setNewName('')
         setNewPhone('')
         setSearchTerm('')
@@ -55,6 +64,17 @@ const App = () => {
         setSearchTerm(event.target.value)
     }
 
+    const handleRemove = (personId) => {
+
+        const confirm = window.confirm(`Poistetaanko ${persons.find(person => person.id === personId).name}`)
+        if(!confirm){ return }
+
+        personsService.remove(personId).then(
+            setPersons(persons.filter(person => person.id !== personId))
+        )
+        
+    }
+
 
     return (
         <div>
@@ -62,7 +82,7 @@ const App = () => {
             <SearchElement searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
             <AddPerson saveForm={saveForm} newName={newName} handleNameChange={handleNameChange}
                 newPhone={newPhone} handlePhoneChange={handlePhoneChange} />
-            <PersonList persons={searchList} />
+            <PersonList persons={searchList} removePerson={handleRemove} />
         </div>
     )
 
