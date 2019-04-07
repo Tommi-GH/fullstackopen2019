@@ -72,18 +72,6 @@ const App = () => {
         })
     }
 
-    const handleNameChange = (event) => {
-        setNewName(event.target.value)
-    }
-
-    const handlePhoneChange = (event) => {
-        setNewPhone(event.target.value)
-    }
-
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value)
-    }
-
     const removePerson = (personId) => {
         const foundPerson = persons.find(person => person.id === personId)
         const confirm = window.confirm(`Poistetaanko ${foundPerson.name}`)
@@ -104,6 +92,18 @@ const App = () => {
             setMessage({ message: null, messageType: null })
         }, 5000)
     )
+
+    const handleNameChange = (event) => {
+        setNewName(event.target.value)
+    }
+
+    const handlePhoneChange = (event) => {
+        setNewPhone(event.target.value)
+    }
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value)
+    }
 
 
     return (
