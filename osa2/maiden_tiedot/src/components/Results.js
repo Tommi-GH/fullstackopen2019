@@ -40,7 +40,7 @@ const Results = ({ countryList, handleShowClick, weather, getWeather }) => {
         <div>
             <h2>Results:</h2>
             {countryList.map(country =>
-                <Result key={country.numericCode} country={country} handleShowClick={handleShowClick} />)}
+                <Result key={country.numericCode} country={country} handleShowClick={() => handleShowClick(country.numericCode)} />)}
 
         </div>
     )

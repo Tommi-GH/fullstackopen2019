@@ -22,7 +22,7 @@ const App = () => {
   const getWeather = (capital) => {
     useEffect(() => {
       axios
-        .get(connections.weather.baseUrl+'?key='+connections.weather.apiKey+'&q=' + capital)
+        .get(`${connections.weather.baseUrl}?key=${connections.weather.apiKey}&q=${capital}`)
         .then(result => {
           setWeather({
             text: result.data.current.condition.text,
@@ -38,8 +38,8 @@ const App = () => {
     setSearchTerm(event.target.value)
   }
 
-  const handleShowClick = (event) => {
-    setSearchTerm(countries.find(country => country.numericCode === event.target.id).name)
+  const handleShowClick = (numericCode) => {
+    setSearchTerm(countries.find(country => country.numericCode === numericCode).name)
   }
 
   return (
