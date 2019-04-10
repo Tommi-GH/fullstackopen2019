@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:3001/persons'
+const baseUrl = 'https://fullstackopen2019.appspot.com/api/persons'
 
 const getAll = () => {
     console.log('get all persons')

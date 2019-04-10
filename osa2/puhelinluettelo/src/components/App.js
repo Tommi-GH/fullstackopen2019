@@ -29,12 +29,12 @@ const App = () => {
             return
         }
 
-        if (persons.find(person => person.phone.localeCompare(newPhone) === 0)) {
+        if (persons.find(person => person.phone === newPhone)) {
             alert(`${newPhone} on jo käytössä`)
             return
         }
 
-        const foundPerson = persons.find(person => person.name.localeCompare(newName) === 0)
+        const foundPerson = persons.find(person => person.name === newName)
 
         if (foundPerson) {
             const confirm = window.confirm(`${newName} on jo luettelossa, korvataanko numero uudella?`)
