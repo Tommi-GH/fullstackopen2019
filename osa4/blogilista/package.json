@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose",
     "watch": "nodemon index.js"
   },
   "author": "Tommi Tiira",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-plugin-react": "^7.12.4",
+    "jest": "^24.7.1",
     "nodemon": "^1.18.11"
   },
   "dependencies": {
@@ -19,5 +22,8 @@
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "mongoose": "^5.5.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

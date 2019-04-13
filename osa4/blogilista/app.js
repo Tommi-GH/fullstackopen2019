@@ -10,7 +10,7 @@ const mongoose = require('mongoose')
 
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
-.catch(error => console.log(error))
+    .catch(error => console.log(error))
 
 app.use(cors())
 app.use(bodyParser.json())
