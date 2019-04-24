@@ -1,4 +1,5 @@
 const listHelper = require('../utils/list_helper')
+const helperBlogs = require('../misc/blogs_for_testing').blogs
 
 test('dummy returns one', () => {
     const blogs = []
@@ -8,7 +9,7 @@ test('dummy returns one', () => {
 })
 
 describe('total likes', () => {
-    const blogs = require('../misc/blogs_for_testing').blogs
+    const blogs = helperBlogs
 
     test('total likes', () => {
         const result = listHelper.totalLikes(blogs)
@@ -17,7 +18,7 @@ describe('total likes', () => {
 })
 
 describe('favourite blog', () => {
-    const blogs = require('../misc/blogs_for_testing').blogs
+    const blogs = helperBlogs
 
     test('most likes', () => {
         const result = listHelper.favoriteBlog(blogs)
