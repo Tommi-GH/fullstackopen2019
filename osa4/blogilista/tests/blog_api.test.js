@@ -27,19 +27,18 @@ test('blogs as json returned from API', async () => {
 
 test('all blogs are returned from API', async () => {
     const response = await api.get('/api/blogs')
-
     expect(response.body.length).toBe(helperBlogs.length)
 })
 
 test('identifier id returned from API', async () => {
     const response = await api.get('/api/blogs')
-    console.log(response.body[0])
     expect(response.body[0].id).toBeDefined()
 })
 
 test('post added via API', async () => {
     const addBlog = helperBlogs[0]
-    await api.post('/api/blogs', addBlog)
+    await api.post('/api/blogs')
+        .send(addBlog)
         .expect(201)
 
     const response = await api.get('/api/blogs')
@@ -48,18 +47,30 @@ test('post added via API', async () => {
 
 test('post added without likes returns likes 0 API', async () => {
     const addBlog = {
-        _id: '5a422aa71b54a676234d17f8',
         title: 'Go To Statement Considered Harmful',
         author: 'Edsger W. Dijkstra',
-        url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-        __v: 0
+        url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
     }
 
-    await api.post('/api/blogs', addBlog)
+    await api.post('/api/blogs')
+        .send(addBlog)
         .expect(201)
-    
+
     const response = await api.get('/api/blogs')
     expect(response.body[response.body.length-1].likes).toBe(0)
+})
+
+
+test('post added without title and url returns 400 API', async () => {
+    const addBlog = {
+        likes: 10,
+        author: 'Edsger W. Dijkstra'
+    }
+
+    await api.post('/api/blogs')
+        .send(addBlog)
+        .expect(400)
+
 })
 
 
