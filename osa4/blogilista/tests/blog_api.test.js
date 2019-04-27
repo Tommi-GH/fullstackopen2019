@@ -117,33 +117,32 @@ describe('removing blogs', () => {
     })
 })
 
-describe('editing blogs', () => {
+describe('updating blogs', () => {
     test('adding 1 like to blog with valid id is saved to db API', async () => {
-        const id = '5a422a851b54a676234d17f7'
+        const blogId = '5a422a851b54a676234d17f7'
         const originalBlog = {
-            id: id,
+            id: blogId,
             title: 'React patterns',
             author: 'Michael Chan',
             url: 'https://reactpatterns.com/',
             likes: 7,
         }
         const updateBlog = {
-            id: id,
             title: 'React patterns',
             author: 'Michael Chan',
             url: 'https://reactpatterns.com/',
             likes: 5,
         }
 
-        const response = await api.get('/api/blogs/'+id)
+        const response = await api.get('/api/blogs/' + blogId)
         expect(response.body).toEqual(originalBlog)
 
-        await api.put('/api/blogs/'+id)
+        await api.put('/api/blogs/' + blogId)
             .send(updateBlog)
             .expect(200)
 
-        const response2 = await api.get('/api/blogs/'+id)
-        expect(response2.body).toEqual(updateBlog)
+        const response2 = await api.get('/api/blogs/' + blogId)
+        expect(response2.body).toEqual({ ...updateBlog, id: blogId })
     })
 
     test('adding 1 like to blog with invalid id does not affect db API', async () => {

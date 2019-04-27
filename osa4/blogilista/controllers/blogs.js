@@ -7,17 +7,22 @@ blogsRouter.get('/', async (request, response) => {
     response.json(blogs)
 })
 
-blogsRouter.get('/:id', async (request, response) => {
-    const blog = await Blog.findById(request.params.id)
-    if (!blog) {
-        response.status(404).send()
-        return
+blogsRouter.get('/:id', async (request, response, next) => {
+    let blog
+    try {
+        blog = await Blog.findById(request.params.id)
+    } catch (ex) {
+        next(ex)
     }
 
-    response.json(blog)
+    if (!blog) {
+        response.status(404).send()
+    } else {
+        response.json(blog)
+    }
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', async (request, response, next) => {
     const blog = new Blog({
         title: request.body.title,
         author: request.body.author,
@@ -25,35 +30,44 @@ blogsRouter.post('/', async (request, response) => {
         likes: request.body.likes === undefined ? 0 : request.body.likes,
     })
 
-    if (blog.title === undefined || blog.url === undefined) {
-        response.status(400).json({ error: 'no title or url in blog' }).send()
-        return
+    try {
+        const result = await blog.save()
+        response.status(201).json(result)
+    } catch (ex) {
+        next(ex)
     }
-    const result = await blog.save()
-    response.status(201).json(result)
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', async (request, response, next) => {
     const body = request.body
     const updatedBlog = {
-        id: request.params.id,
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes
     }
 
-    const blog = await Blog.findByIdAndUpdate(request.params.id, updatedBlog, { new: true })
+    let blog
+    try {
+        blog = await Blog.findByIdAndUpdate(request.params.id, updatedBlog, { new: true })
+    } catch (ex) {
+        next(ex)
+    }
+
     if (!blog) {
         response.status(404).send()
-        return
+    } else {
+        response.json(blog)
     }
-    response.json(blog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
+blogsRouter.delete('/:id', async (request, response, next) => {
+    try {
+        await Blog.findByIdAndDelete(request.params.id)
+        response.status(204).end()
+    } catch (ex) {
+        next(ex)
+    }
 })
 
 module.exports = blogsRouter
