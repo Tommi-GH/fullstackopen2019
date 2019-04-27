@@ -5,20 +5,18 @@ const mongoose = require('mongoose')
 const Blog = require('../models/Blog')
 const helperBlogs = require('../misc/blogs_for_testing').blogs
 
-describe('when there is initially some blogs saved', () => {
-    beforeEach(async () => {
-        console.log('removing all')
-        await Blog.deleteMany({})
-        console.log('adding', helperBlogs.length, 'blogs')
 
-        const blogs = helperBlogs
-            .map(blog => new Blog(blog))
-        const promiseArray = blogs.map(blog => blog.save())
-        await Promise.all(promiseArray)
+beforeEach(async () => {
+    await Blog.deleteMany({})
+    const blogs = helperBlogs
+        .map(blog => new Blog(blog))
+    const promiseArray = blogs.map(blog => blog.save())
+    await Promise.all(promiseArray)
 
-        console.log('added', promiseArray.length, 'items')
-    })
+    console.log('db initialised to', promiseArray.length, 'items')
+})
 
+describe('getting all blogs', () => {
     test('blogs as json returned from API', async () => {
         await api
             .get('/api/blogs')
@@ -121,24 +119,31 @@ describe('removing blogs', () => {
 
 describe('editing blogs', () => {
     test('adding 1 like to blog with valid id is saved to db API', async () => {
+        const id = '5a422a851b54a676234d17f7'
+        const originalBlog = {
+            id: id,
+            title: 'React patterns',
+            author: 'Michael Chan',
+            url: 'https://reactpatterns.com/',
+            likes: 7,
+        }
         const updateBlog = {
+            id: id,
             title: 'React patterns',
             author: 'Michael Chan',
             url: 'https://reactpatterns.com/',
             likes: 5,
         }
-        await api.put('/api/blogs/5a422a851b54a676234d17f7')
+
+        const response = await api.get('/api/blogs/'+id)
+        expect(response.body).toEqual(originalBlog)
+
+        await api.put('/api/blogs/'+id)
             .send(updateBlog)
             .expect(200)
 
-        const response = await api.get('/api/blogs/5a422a851b54a676234d17f7')
-        expect(response.body).toEqual({
-            id: '5a422a851b54a676234d17f7',
-            title: 'React patterns',
-            author: 'Michael Chan',
-            url: 'https://reactpatterns.com/',
-            likes: 5,
-        })
+        const response2 = await api.get('/api/blogs/'+id)
+        expect(response2.body).toEqual(updateBlog)
     })
 
     test('adding 1 like to blog with invalid id does not affect db API', async () => {
