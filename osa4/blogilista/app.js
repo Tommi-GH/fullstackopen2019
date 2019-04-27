@@ -7,11 +7,17 @@ const app = express()
 const blogsRouter = require('./controllers/blogs')
 const mongoose = require('mongoose')
 const errorHandler = require('./utils/errorHandler')
+const logger = require('./utils/logger')
 
 
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
-    .catch(error => console.log(error))
+    .then(() => {
+        logger.info('connected to MongoDB')
+    })
+    .catch((error) => {
+        logger.error(error)
+    })
 
 app.use(cors())
 app.use(bodyParser.json())
