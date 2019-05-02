@@ -2,7 +2,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const mongoose = require('mongoose')
-const testHelper = require('./test_helper.test')
+const testHelper = require('./test_helper')
 const Blog = require('../models/Blog')
 const helperBlogs = require('../misc/blogs_for_testing').blogs
 
@@ -14,7 +14,7 @@ describe('with initialized db', () => {
         const promiseArray = blogs.map(blog => blog.save())
         await Promise.all(promiseArray)
 
-        console.log('db initialised to', promiseArray.length, 'items')
+        console.log('db initialized to', promiseArray.length, 'blogs')
     })
 
     describe('getting all blogs', () => {
