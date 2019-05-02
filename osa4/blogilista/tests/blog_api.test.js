@@ -4,9 +4,25 @@ const api = supertest(app)
 const mongoose = require('mongoose')
 const testHelper = require('./test_helper')
 const Blog = require('../models/Blog')
+const User = require('../models/User')
 const helperBlogs = require('../misc/blogs_for_testing').blogs
+const jwt = require('jsonwebtoken')
+const helperUsers = require('../misc/users_for_testing')
 
 describe('with initialized db', () => {
+    let token
+
+    beforeAll(async () => {
+        await User.deleteMany({})
+        const user = new User(helperUsers[0])
+        await user.save()
+        const userForToken = {
+            username: user.username,
+            id: user.id
+        }
+        token = await jwt.sign(userForToken, process.env.SECRET)
+    })
+
     beforeEach(async () => {
         await Blog.deleteMany({})
         const blogs = helperBlogs
@@ -61,9 +77,12 @@ describe('with initialized db', () => {
                 author: 'Edsger W. Dijkstra',
                 url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
             }
-            await api.post('/api/blogs')
+            const response = await api.post('/api/blogs')
+                .set({ Authorization: token })
                 .send(addBlog)
                 .expect(201)
+
+            console.log(response.body)
 
             const blogsAtEnd = await testHelper.blogsInDb()
             expect(blogsAtEnd.length).toBe(helperBlogs.length + 1)
@@ -77,6 +96,7 @@ describe('with initialized db', () => {
             }
 
             await api.post('/api/blogs')
+                .set({ 'Authorization': token })
                 .send(addBlog)
                 .expect(201)
             const blogsAtEnd = await testHelper.blogsInDb()
@@ -91,6 +111,8 @@ describe('with initialized db', () => {
             }
 
             await api.post('/api/blogs')
+                .set('Content-Type', 'application/json')
+                .set('Authorization', token)
                 .send(addBlog)
                 .expect(400)
 
@@ -102,6 +124,7 @@ describe('with initialized db', () => {
             const blogs = await testHelper.blogsInDb()
             const blogId = blogs[0].id
             await api.delete(`/api/blogs/${blogId}`)
+                .set('Authorization', token)
                 .expect(204)
 
             const blogsAtEnd = await testHelper.blogsInDb()
@@ -110,6 +133,7 @@ describe('with initialized db', () => {
 
         test('delete blog with invalid id does not affect db API', async () => {
             await api.delete('/api/blogs/5a422a851b54a676234d17f1')
+                .set('Authorization', token)
                 .expect(204)
             const blogsAtEnd = await testHelper.blogsInDb()
             expect(blogsAtEnd.length).toBe(helperBlogs.length)

@@ -1,8 +1,9 @@
 
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: Bearer token_here
 
 { "title": "Blogi otsikko",
   "author": "kirjoittaja",
   "url": "osoite",
-  "likes": 100}
+  "likes": 100 }
