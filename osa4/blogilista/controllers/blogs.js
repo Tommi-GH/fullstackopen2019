@@ -34,7 +34,7 @@ blogsRouter.post('/', async (request, response, next) => {
 
         const user = await User.findById(decodedToken.id)
 
-        if(!user) {
+        if (!user) {
             return response.status(401).json({ error: 'user not found' })
         }
 
@@ -62,17 +62,19 @@ blogsRouter.put('/:id', async (request, response, next) => {
         likes: body.likes
     }
 
-    let blog
+    const id = request.params.id
+
     try {
-        blog = await Blog.findByIdAndUpdate(request.params.id, updatedBlog, { new: true })
+        const blog = await Blog.findByIdAndUpdate(id, updatedBlog, { new: true })
+
+        if (!blog) {
+            response.status(404).send()
+        } else {
+            response.json(blog)
+        }
+
     } catch (ex) {
         next(ex)
-    }
-
-    if (!blog) {
-        response.status(404).send()
-    } else {
-        response.json(blog)
     }
 })
 
@@ -86,17 +88,17 @@ blogsRouter.delete('/:id', async (request, response, next) => {
 
         const user = await User.findById(decodedToken.id)
 
-        if(!user) {
+        if (!user) {
             return response.status(401).json({ error: 'user not found' })
         }
 
         const blog = await Blog.findById(request.params.id)
 
-        if(!blog) {
-            return response.status(404).json({ error: 'blog not found' })
+        if (!blog) {
+            return response.status(204).end()
         }
 
-        if(blog.user.toString() !== user.id.toString()){
+        if (blog.user.toString() !== user.id.toString()) {
             return response.status(401).json({ error: 'must be blog owner to delete' })
         }
 

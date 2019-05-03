@@ -12,17 +12,6 @@ const helperUsers = require('../misc/users_for_testing')
 describe('with initialized db', () => {
     let token
 
-    beforeAll(async () => {
-        await User.deleteMany({})
-        const user = new User(helperUsers[0])
-        await user.save()
-        const userForToken = {
-            username: user.username,
-            id: user.id
-        }
-        token = await jwt.sign(userForToken, process.env.SECRET)
-    })
-
     beforeEach(async () => {
         await Blog.deleteMany({})
         const blogs = helperBlogs
@@ -31,6 +20,18 @@ describe('with initialized db', () => {
         await Promise.all(promiseArray)
 
         console.log('db initialized to', promiseArray.length, 'blogs')
+
+        await User.deleteMany({})
+        const newUser = new User(helperUsers[0])
+        await newUser.save()
+
+        const user = await User.findOne({})
+        const userForToken = {
+            username: user.userName,
+            id: user.id
+        }
+        const tokenSignature = await jwt.sign(userForToken, process.env.SECRET)
+        token = `Bearer ${tokenSignature}`
     })
 
     describe('getting all blogs', () => {
@@ -56,10 +57,24 @@ describe('with initialized db', () => {
 
         test('single blog with matching id returned from API', async () => {
             const blogs = await testHelper.blogsInDb()
-            const id = blogs[0].id
-            console.log(id)
-            const response = await api.get(`/api/blogs/${id}`)
-            expect(response.body).toEqual(blogs[0])
+            const blog = blogs.find(blog => blog.id === '5a422a851b54a676234d17f7')
+
+            const expectedBlog = {
+                'author': 'Michael Chan',
+                'id': '5a422a851b54a676234d17f7',
+                'likes': 7,
+                'title': 'React patterns',
+                'url': 'https://reactpatterns.com/',
+                'user': {
+                    'firstName': 'Etunimi1',
+                    'id': '5ccb123eb8a7042420838cce',
+                    'lastName': 'Sukunimi1',
+                    'userName': 'kayttajanimi1',
+                }
+            }
+
+            const response = await api.get(`/api/blogs/${blog.id}`)
+            expect(response.body).toEqual(expectedBlog)
         })
 
         test('single blog with nonmatching id returns 404 from API', async () => {
@@ -77,12 +92,10 @@ describe('with initialized db', () => {
                 author: 'Edsger W. Dijkstra',
                 url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
             }
-            const response = await api.post('/api/blogs')
-                .set({ Authorization: token })
+            await api.post('/api/blogs')
+                .set('Authorization', token)
                 .send(addBlog)
                 .expect(201)
-
-            console.log(response.body)
 
             const blogsAtEnd = await testHelper.blogsInDb()
             expect(blogsAtEnd.length).toBe(helperBlogs.length + 1)
@@ -96,7 +109,7 @@ describe('with initialized db', () => {
             }
 
             await api.post('/api/blogs')
-                .set({ 'Authorization': token })
+                .set('Authorization', token)
                 .send(addBlog)
                 .expect(201)
             const blogsAtEnd = await testHelper.blogsInDb()
@@ -120,7 +133,18 @@ describe('with initialized db', () => {
     })
 
     describe('removing blogs', () => {
-        test('delete blog with valid id is removed from db API', async () => {
+        test('delete blog with valid id and user token is removed from db API', async () => {
+            const blogs = await testHelper.blogsInDb()
+            const blogId = blogs[0].id
+            await api.delete(`/api/blogs/${blogId}`)
+                .set('Authorization', token)
+                .expect(204)
+
+            const blogsAtEnd = await testHelper.blogsInDb()
+            expect(blogsAtEnd.length).toBe(helperBlogs.length - 1)
+        })
+
+        test('delete blog with valid id and invalid user token does not affect db API', async () => {
             const blogs = await testHelper.blogsInDb()
             const blogId = blogs[0].id
             await api.delete(`/api/blogs/${blogId}`)
@@ -143,22 +167,37 @@ describe('with initialized db', () => {
     describe('updating blogs', () => {
         test('adding 1 like to blog with valid id is saved to db API', async () => {
             const blogs = await testHelper.blogsInDb()
-            const blogId = blogs[0].id
-            const originalBlog = blogs[0]
+            const blog = blogs.find(blog => blog.id === '5a422a851b54a676234d17f7')
             const updateBlog = {
-                ...blogs[0],
+                ...blog,
                 likes: 5,
             }
 
-            const response = await api.get(`/api/blogs/${blogId}`)
-            expect(response.body).toEqual(originalBlog)
+            const expectedBlog = {
+                'author': 'Michael Chan',
+                'id': '5a422a851b54a676234d17f7',
+                'likes': 7,
+                'title': 'React patterns',
+                'url': 'https://reactpatterns.com/',
+                'user': {
+                    'firstName': 'Etunimi1',
+                    'id': '5ccb123eb8a7042420838cce',
+                    'lastName': 'Sukunimi1',
+                    'userName': 'kayttajanimi1',
+                }
+            }
 
-            await api.put('/api/blogs/' + blogId)
+            console.log(blog)
+
+            const response = await api.get(`/api/blogs/${blog.id}`)
+            expect(response.body).toEqual(expectedBlog)
+
+            await api.put(`/api/blogs/${blog.id}`)
                 .send(updateBlog)
                 .expect(200)
 
-            const response2 = await api.get(`/api/blogs/${blogId}`)
-            expect(response2.body).toEqual({ ...updateBlog, id: blogId })
+            const response2 = await api.get(`/api/blogs/${blog.id}`)
+            expect(response2.body).toEqual({ ...expectedBlog, likes: 5 })
         })
 
         test('adding 1 like to blog with invalid id does not affect db API', async () => {

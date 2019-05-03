@@ -3,8 +3,8 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-    "firstName": "Etunimi2",
-    "lastName": "Sukunimi2",
-    "userName": "kayttajanimi2",
-    "password": "salasana2"
+    "firstName": "Etunimi4",
+    "lastName": "Sukunimi4",
+    "userName": "kayttajanimi4",
+    "password": "salasana4"
 }
