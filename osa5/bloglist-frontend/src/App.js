@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Login from './components/Login'
 import loginService from './services/login'
 import User from './components/User'
+import Blogs from './components/Blogs'
+import CreateBlog from './components/CreateBlog'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [{ message, messageType }, setMessage] = useState({ message: null, messageType: null })
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value)
@@ -22,48 +24,59 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    console.log('Logging in',username,password)
 
     try {
       const user = await loginService.login({
-        username,password
+        username, password
       })
       setUser(user)
-      localStorage.setItem('user',JSON.stringify(user))
+      localStorage.setItem('user', JSON.stringify(user))
       setUsername('')
       setPassword('')
 
-    } catch(ex) {
-      setErrorMessage('Username or password incorrect')
-      setTimeout(()=>{
-        setErrorMessage(null)
+    } catch (ex) {
+      setMessage({ message: 'Username or password incorrect', messageType: 'error' })
+      setTimeout(() => {
+        setMessage({ message: null, messageType: null })
       }, 4000)
     }
   }
 
+  const handleLogout = async () => {
+    localStorage.removeItem('user')
+    setUser(null)
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs(blogs)
+    )
   }, [])
 
   useEffect(() => {
     const user = localStorage.getItem('user')
-    if(user) {
+    if (user) {
       setUser(JSON.parse(user))
     }
   }, [])
 
+  const updateBlogs = (blog) => {
+    setBlogs(blogs.concat(blog))
+
+    setMessage({ message: `Added new blog: ${blog.title} by ${blog.author}`, messageType: 'success' })
+    setTimeout(() => {
+      setMessage({ message: null, messageType: null })
+    }, 4000)
+  }
+
   return (
     <div>
+      <Notification message={message} messageType={messageType}></Notification>
       <Login handleLogin={handleLogin} username={username} handleUsernameChange={handleUsernameChange}
         password={password} handlePasswordChange={handlePasswordChange}></Login>
-      <p>{errorMessage}</p>
-      <User user={user} ></User>
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <User user={user} handleLogout={handleLogout} ></User>
+      <CreateBlog user={user} updateBlogs={updateBlogs} setMessage={setMessage}></CreateBlog>
+      <Blogs user={user} blogs={blogs} ></Blogs>
     </div>
   )
 }

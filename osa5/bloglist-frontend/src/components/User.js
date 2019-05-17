@@ -1,15 +1,13 @@
 import React from 'react'
 
-const User = (user) => {
-    if(user === null){
+const User = ({user, handleLogout}) => {
+    if(!user){
         return null
     }
-    console.log(user)
-    console.log(user.firstName)
     return (
         <div>
-            <p>Logged in as:</p>
-            <p>{user.firstName} {user.lastName}</p>
+            <p>Logged in as: {user.firstName} {user.lastName}</p>
+            <button onClick={handleLogout} >Logout</button>
         </div>
     )
 }
