@@ -4,13 +4,19 @@ import { render, cleanup, findAllByTestId, fireEvent } from 'react-testing-libra
 import Blog from '../components/Blog'
 
 describe('<Blog />', () => {
-    
-it('before clicking, only basic information is visible', () => {
+
+  it('before clicking, only basic information is visible', () => {
     const blog = {
-        title: 'This is a title',
-        author: 'A.U. Thor',
-        likes: '27',
-        url:'https://thorblog.com'
+      title: 'This is a title',
+      author: 'A.U. Thor',
+      likes: '27',
+      url:'https://thorblog.com',
+      user: {
+        firstName: 'etunimi',
+        lastName: 'sukunimi',
+        username: 'käyttäjänimi',
+        id: '1234'
+      }
     }
 
     const component =  render(<Blog blog={blog}/>)
@@ -19,15 +25,21 @@ it('before clicking, only basic information is visible', () => {
     expect(component.container).toHaveTextContent('A.U. Thor')
     expect(component.container).not.toHaveTextContent('Likes: 27')
     expect(component.container).not.toHaveTextContent('https://thorblog.com')
-})
+  })
 
 
-it('after clicking, only all information is visible', () => {
+  it('after clicking, all information is visible', () => {
     const blog = {
-        title: 'This is a title',
-        author: 'A.U. Thor',
-        likes: '27',
-        url:'https://thorblog.com'
+      title: 'This is a title',
+      author: 'A.U. Thor',
+      likes: '27',
+      url:'https://thorblog.com',
+      user: {
+        firstName: 'etunimi',
+        lastName: 'sukunimi',
+        username: 'käyttäjänimi',
+        id: '1234'
+      }
     }
 
     const component =  render(<Blog blog={blog}/>)
@@ -36,5 +48,5 @@ it('after clicking, only all information is visible', () => {
     expect(component.container).toHaveTextContent('A.U. Thor')
     expect(component.container).toHaveTextContent('Likes: 27')
     expect(component.container).toHaveTextContent('https://thorblog.com')
-})
+  })
 })
