@@ -8,7 +8,7 @@ const Login = ({ handleLogin, username, handleUsernameChange, password, handlePa
   }
 
   return (
-    <div>
+    <div className="loginForm">
       <form onSubmit={handleLogin}>
         <div>
                 Username <input type="text" value={username} onChange={handleUsernameChange} />

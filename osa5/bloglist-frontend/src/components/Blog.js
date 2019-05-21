@@ -20,7 +20,7 @@ const Blog = ({ blog, handleLike, handleDelete, ownerId }) => {
   }
 
   return (
-    <div onClick={toggleExpanded} style={style}>
+    <div onClick={toggleExpanded} style={style} className="blog">
       {blog.title} {blog.author}
       <div style={showWhenExpanded} className="additionalInfo">
         <div>Blog url: {blog.url}</div>
