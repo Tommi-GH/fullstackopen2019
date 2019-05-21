@@ -5,48 +5,34 @@ import Blog from '../components/Blog'
 
 describe('<Blog />', () => {
 
-  it('before clicking, only basic information is visible', () => {
-    const blog = {
-      title: 'This is a title',
-      author: 'A.U. Thor',
-      likes: '27',
-      url:'https://thorblog.com',
-      user: {
-        firstName: 'etunimi',
-        lastName: 'sukunimi',
-        username: 'käyttäjänimi',
-        id: '1234'
-      }
+  let component
+  const blog = {
+    title: 'This is a title',
+    author: 'A.U. Thor',
+    likes: '27',
+    url: 'https://thorblog.com',
+    user: {
+      firstName: 'etunimi',
+      lastName: 'sukunimi',
+      username: 'käyttäjänimi',
+      id: '1234'
     }
+  }
 
-    const component =  render(<Blog blog={blog}/>)
+  beforeEach(() => {
+    component = render(<Blog blog={blog} />)
+  })
 
-    expect(component.container).toHaveTextContent('This is a title')
-    expect(component.container).toHaveTextContent('A.U. Thor')
-    expect(component.container).not.toHaveTextContent('Likes: 27')
-    expect(component.container).not.toHaveTextContent('https://thorblog.com')
+  it('before clicking, only basic information is visible', () => {
+    const div = component.container.querySelector('.additionalInfo')
+    expect(div).toHaveStyle('display:none')
   })
 
 
   it('after clicking, all information is visible', () => {
-    const blog = {
-      title: 'This is a title',
-      author: 'A.U. Thor',
-      likes: '27',
-      url:'https://thorblog.com',
-      user: {
-        firstName: 'etunimi',
-        lastName: 'sukunimi',
-        username: 'käyttäjänimi',
-        id: '1234'
-      }
-    }
 
-    const component =  render(<Blog blog={blog}/>)
-
-    expect(component.container).toHaveTextContent('This is a title')
-    expect(component.container).toHaveTextContent('A.U. Thor')
-    expect(component.container).toHaveTextContent('Likes: 27')
-    expect(component.container).toHaveTextContent('https://thorblog.com')
+    const div = component.container.querySelector('.additionalInfo')
+    fireEvent.click(div)
+    expect(div).not.toHaveStyle('display:none')
   })
 })
