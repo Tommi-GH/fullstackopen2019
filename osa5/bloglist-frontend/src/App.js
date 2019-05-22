@@ -64,6 +64,7 @@ const App = () => {
 
   useEffect(() => {
     const user = localStorage.getItem('user')
+
     if (user) {
       setUser(JSON.parse(user))
     }
@@ -128,16 +129,25 @@ const App = () => {
 
   }
 
+  const loginForm = () => {
+    return (<Login handleLogin={handleLogin} username={username} handleUsernameChange={handleUsernameChange}
+      password={password} handlePasswordChange={handlePasswordChange} user={user}></Login>)
+
+  }
+
+
+
 
   return (
     <div>
       <Notification message={message} messageType={messageType}></Notification>
 
-      <Login handleLogin={handleLogin} username={username} handleUsernameChange={handleUsernameChange}
-        password={password} handlePasswordChange={handlePasswordChange}></Login>
+      {user === null ?
+        loginForm() :
+        <User user={user} handleLogout={handleLogout} ></User>
+      }
 
-      <User user={user} handleLogout={handleLogout} ></User>
-      <Togglable buttonLabel='New blog' ref={createBlogRef}>
+      <Togglable buttonLabel='New blog' ref={createBlogRef} user={user}>
         <CreateBlog user={user} updateBlogs={addBlog} setMessage={setMessage}></CreateBlog>
       </Togglable>
       <Blogs user={user} blogs={blogs} handleLike={handleLike} handleDelete={handleDelete} ></Blogs>

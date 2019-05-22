@@ -1,33 +1,29 @@
 import React from 'react'
 import 'jest-dom/extend-expect'
-import { render, wait } from 'react-testing-library'
+import { render, cleanup, act, waitForElement } from 'react-testing-library'
 jest.mock('../services/blogs')
 import App from '../App'
 
-
+afterEach(cleanup)
 
 describe('<App />', () => {
   it('if no user logged, blogs are not rendered', async () => {
-    const component = render(
-      <App />
-    )
+    let component
 
-    component.rerender(<App />)
-
-    await waitForElement(() => component.container.querySelector('.loginForm'))
+    act(() => {
+      component = render(
+        <App />
+      )
+    })
 
     expect(component.container).toHaveTextContent('Username')
     expect(component.container).toHaveTextContent('Password')
     expect(component.container).not.toHaveTextContent('React patterns')
   })
 
-  it('if user is logged, blogs are rendered', async () => {
-    const component = render(
-      <App />
-    )
 
+  it('if user is logged, blogs are rendered', async () => {
     const user = {
-      username: 'tester',
       token: '1231231214',
       firstName: 'Teuvo',
       lastName: 'Testaaja'
@@ -35,12 +31,17 @@ describe('<App />', () => {
 
     localStorage.setItem('user', JSON.stringify(user))
 
-    component.rerender(<App />)
+    let component
 
-    const { getByText } = component
-    await wait(() => getByText('Blogs'))
+    act(() => {
+      component = render(
+        <App />
+      )
+    })
 
-    const blogs = component.querySelectorAll('.blog')
+    await waitForElement(() => component.container.querySelector('.blog'))
+
+    const blogs = component.container.querySelectorAll('.blog')
 
     expect (blogs.length).toBe(7)
     expect(component.container).not.toHaveTextContent('Username')

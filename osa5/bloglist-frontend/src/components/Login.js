@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Login = ({ handleLogin, username, handleUsernameChange, password, handlePasswordChange }) => {
+const Login = ({ handleLogin, username, handleUsernameChange, password, handlePasswordChange, user }) => {
 
-  if (localStorage.getItem('user')){
+  if (user){
     return null
   }
 
