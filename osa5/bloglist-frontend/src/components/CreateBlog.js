@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import blogService from '../services/blogs'
+import { useField } from '../hooks/index'
 
 const CreateBlog = ({ user, updateBlogs: addBlog, setMessage }) => {
 
@@ -7,21 +8,21 @@ const CreateBlog = ({ user, updateBlogs: addBlog, setMessage }) => {
     return null
   }
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const title = useField('text')
+  const author = useField('text')
+  const url = useField('text')
 
   const handleCreate = async (event) => {
     event.preventDefault()
-    const blog = { title, author, url }
+    const blog = { title: title.value, author:author.value, url:url.value }
 
     try {
       const res = await blogService.createBlog(blog)
       if (res) {
         addBlog(res)
-        setTitle('')
-        setAuthor('')
-        setUrl('')
+        title.reset()
+        author.reset()
+        url.reset()
       }
     } catch (ex) {
       setMessage({ message: 'something went wrong, blog not created. Message: ',ex, messageType: 'error' })
@@ -37,13 +38,13 @@ const CreateBlog = ({ user, updateBlogs: addBlog, setMessage }) => {
       <h3>Create a new blog</h3>
       <form onSubmit={handleCreate}>
         <div>
-                    Title <input type="text" value={title} onChange={event => setTitle(event.target.value)} />
+                    Title <input {...title} />
         </div>
         <div>
-                    Author <input type="text" value={author} onChange={event => setAuthor(event.target.value)} />
+                    Author <input {...author} />
         </div>
         <div>
-                    Url <input type="text" value={url} onChange={event => setUrl(event.target.value)} />
+                    Url <input {...url} />
         </div>
         <div><button type='submit'>Create</button></div>
       </form>

@@ -7,35 +7,27 @@ import Blogs from './components/Blogs'
 import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { useField } from './hooks/index'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const username = useField('text')
+  const password = useField('password')
   const [user, setUser] = useState(null)
   const [{ message, messageType }, setMessage] = useState({ message: null, messageType: null })
   const createBlogRef = React.createRef()
-
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value)
-  }
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value)
-  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
-        username, password
-      })
+      const user = await loginService.login(
+        { username: username.value, password: password.value }
+      )
       setUser(user)
       localStorage.setItem('user', JSON.stringify(user))
-      setUsername('')
-      setPassword('')
-
+      username.reset()
+      password.reset()
     } catch (ex) {
       setMessage({ message: 'Username or password incorrect', messageType: 'error' })
       setTimeout(() => {
@@ -130,13 +122,14 @@ const App = () => {
   }
 
   const loginForm = () => {
-    return (<Login handleLogin={handleLogin} username={username} handleUsernameChange={handleUsernameChange}
-      password={password} handlePasswordChange={handlePasswordChange} user={user}></Login>)
+    return (
+      <Login handleLogin={handleLogin}
+        username={username}
+        password={password}
+        user={user}></Login>
+    )
 
   }
-
-
-
 
   return (
     <div>
