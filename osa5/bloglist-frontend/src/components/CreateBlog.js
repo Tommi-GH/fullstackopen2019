@@ -33,18 +33,22 @@ const CreateBlog = ({ user, updateBlogs: addBlog, setMessage }) => {
 
   }
 
+  const titleField = { ...title, reset:'' }
+  const authorField = { ...author, reset:'' }
+  const urlField = { ...url, reset:'' }
+
   return (
     <div>
       <h3>Create a new blog</h3>
       <form onSubmit={handleCreate}>
         <div>
-                    Title <input {...title} />
+                    Title <input {...titleField} />
         </div>
         <div>
-                    Author <input {...author} />
+                    Author <input {...authorField} />
         </div>
         <div>
-                    Url <input {...url} />
+                    Url <input {...urlField} />
         </div>
         <div><button type='submit'>Create</button></div>
       </form>

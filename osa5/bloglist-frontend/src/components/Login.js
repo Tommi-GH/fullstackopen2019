@@ -7,14 +7,17 @@ const Login = ({ handleLogin, username, password, user }) => {
     return null
   }
 
+  const usernameField = { ...username, reset:null }
+  const passwordField = { ...password, reset:null }
+
   return (
     <div className="loginForm">
       <form onSubmit={handleLogin}>
         <div>
-                Username <input {...username} />
+                Username <input {...usernameField} />
         </div>
         <div>
-                Password <input {...password} />
+                Password <input {...passwordField} />
         </div>
         <div><button type='submit'>Login</button></div>
       </form>
