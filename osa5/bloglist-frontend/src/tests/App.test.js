@@ -1,13 +1,13 @@
 import React from 'react'
 import 'jest-dom/extend-expect'
-import { render, waitForElement } from 'react-testing-library'
+import { render, wait } from 'react-testing-library'
 jest.mock('../services/blogs')
 import App from '../App'
 
 
 
 describe('<App />', () => {
-  it('if no user logged, notes are not rendered', async () => {
+  it('if no user logged, blogs are not rendered', async () => {
     const component = render(
       <App />
     )
@@ -21,7 +21,7 @@ describe('<App />', () => {
     expect(component.container).not.toHaveTextContent('React patterns')
   })
 
-  it('if user is logged, notes are rendered', async () => {
+  it('if user is logged, blogs are rendered', async () => {
     const component = render(
       <App />
     )
@@ -37,8 +37,12 @@ describe('<App />', () => {
 
     component.rerender(<App />)
 
-    await waitForElement(() => component.container.querySelector('.blog'))
+    const { getByText } = component
+    await wait(() => getByText('Blogs'))
 
+    const blogs = component.querySelectorAll('.blog')
+
+    expect (blogs.length).toBe(7)
     expect(component.container).not.toHaveTextContent('Username')
     expect(component.container).not.toHaveTextContent('Password')
     expect(component.container).toHaveTextContent('React patterns')
