@@ -6,21 +6,22 @@ import reducer from './reducer'
 const store = createStore(reducer)
 
 const App = () => {
-  const good = () => {
+  const updateState = (typeName) => {
+    console.log(typeName)
     store.dispatch({
-      type: 'GOOD'
+      type: typeName
     })
   }
 
   return (
     <div>
-      <button onClick={good}>hyvä</button> 
-      <button>neutraali</button> 
-      <button>huono</button>
-      <button>nollaa tilastot</button>
+      <button onClick={() => updateState('GOOD')}>hyvä</button> 
+      <button onClick={() => updateState('OK')}>neutraali</button> 
+      <button onClick={() => updateState('BAD')}>huono</button>
+      <button onClick={() => updateState('ZERO')}>nollaa tilastot</button>
       <div>hyvä {store.getState().good}</div>
-      <div>neutraali</div>
-      <div>huono</div>
+      <div>neutraali {store.getState().ok}</div>
+      <div>huono {store.getState().bad}</div>
     </div>
   )
 }
