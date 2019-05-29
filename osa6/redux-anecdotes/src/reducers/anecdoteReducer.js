@@ -33,13 +33,14 @@ export const createAnecdote = (anecdote) => {
 
 return {
     type: 'CREATE',
-    content: anecdote
+    content: anecdote,
+    id: getId()
   }
 }
 
 const initialState = anecdotesAtStart.map(asObject).sort(compareAnecdotes)
 
-const reducer = (state = initialState, action) => {
+const anecdoteReducer = (state = initialState, action) => {
   console.log('action', action)
   let newState
   switch (action.type) {
@@ -49,7 +50,7 @@ const reducer = (state = initialState, action) => {
       case 'CREATE':
           newState = state.concat({
           content:action.content,
-          id:getId(),
+          id:action.id,
           votes:0
         }).sort(compareAnecdotes)
         return newState
@@ -57,4 +58,4 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export default reducer
+export default anecdoteReducer
